@@ -21,8 +21,12 @@ require_once ('vendor/autoload.php');
 $f3 = Base::instance();
 
 //define default route
-$f3 ->route('GET /',function(){
-    echo "My Diner";
+$f3 ->route('GET /breakfast',function(){
+   //echo "Breakfast";
+
+    //display views page
+    $view = new template();
+    echo $view->render('views/breakfast-menu.html');
 });
 //run fat free
 $f3->run();
