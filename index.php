@@ -30,6 +30,11 @@ $f3 ->route('GET /breakfast',function(){
      $view = new Template();
      echo $view->render('views/breakfast-menu.html');
 });
+
+
+// Add date to F3 "hive"
+$f3->set('meals', array('breakfast','lunch','dinner'));
+
 // Define a order form 1 route
 $f3->route('GET|POST /order1', function($f3) {
    // echo "Order Form Part I";
