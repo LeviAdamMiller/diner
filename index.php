@@ -13,6 +13,7 @@ error_reporting(E_ALL);
 
 //require the autoload file
 require_once ('vendor/autoload.php');
+require_once ('model/data-layer.php');
 
 //instantiate Fat-Free framework
 $f3 = Base::instance();
@@ -31,16 +32,9 @@ $f3 ->route('GET /breakfast',function(){
      echo $view->render('views/breakfast-menu.html');
 });
 
-
-// Add date to F3 "hive"
-$f3->set('meals', array('breakfast','lunch','dinner'));
-
 // Define a order form 1 route
 $f3->route('GET|POST /order1', function($f3) {
-   // echo "Order Form Part I";
-   $view = new Template();
-    echo $view->render('views/order-form-1.html');
-// vid explains this code 1:30 hr 1/23/24
+
     // If the form has been posted
    if($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -55,6 +49,13 @@ $f3->route('GET|POST /order1', function($f3) {
         // Redirect to order2 route
        $f3->reroute('order2');
    }
+
+// Add date to F3 "hive"
+   $f3->set('meals', getMeals());
+
+    // Display a view page
+    $view = new Template();
+    echo $view->render('views/order-form-1.html');
 });
 
     // Define a order form 2 route
@@ -80,6 +81,8 @@ $f3->route('GET|POST /order1', function($f3) {
 
     }
 
+        // Add date to F3 "hive"
+        $f3->set('condiments', getCondiments());
     // Display a view page
    $view = new Template();
    echo $view->render('views/order-form-2.html');
