@@ -1,103 +1,71 @@
 <?php
-/*
- * Levi Miller
- * January 2024
- * https://levimiller.greenriverdev.com/328/diner/
- * this is my controller for the Diner app
- */
-
-// turn on error reporting
+// Turn on error reporting
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
-
-//require the autoload file
+// Require the autoload file
 require_once ('vendor/autoload.php');
 require_once ('model/data-layer.php');
 
-//instantiate Fat-Free framework
-$f3 = Base::instance();
+// Test my order class
+/*
+$order = new order("pizza", "lunch", "sriracha");
+var_dump($order);
+*/
 
-//define route
-$f3 ->route('GET /',function(){
-    //display views page
-    $view = new Template();
-    echo $view->render('views/home.html');
+// Test my DataLayer class
+//var_dump( DataLayer::getMeals() );
+//var_dump( DataLayer::getCondiments() );
+
+// Test Validate class
+//echo Validate::validMeal('aloo gobi');
+
+// Instantiate Fat-Free framework (F3)
+$f3 = Base::instance(); //static method
+$con = new Controller($f3);
+
+//Instantiate the data-layer
+$datalayer = new DataLayer();
+
+//Test DataLayer class
+//echo "<pre>";
+//var_dump($datalayer->getOrders());
+//echo "<pre>";
+
+// Define a default route
+$f3->route('GET /', function() {
+$GLOBALS['con']->home();
 });
 
-//define breakfast route
-$f3 ->route('GET /breakfast',function(){
-    // display views page
-     $view = new Template();
-     echo $view->render('views/breakfast-menu.html');
+// Define a breakfast route
+$f3->route('GET /breakfast', function() {
+//echo "Breakfast";
+
+// Display a view page
+$view = new Template();
+echo $view->render('views/breakfast-menu.html');
 });
 
 // Define a order form 1 route
 $f3->route('GET|POST /order1', function($f3) {
-
-    // If the form has been posted
-   if($_SERVER['REQUEST_METHOD'] == 'POST') {
-
-        // Validate the data
-        $food = $_POST['food'];
-        $meal = $_POST['meal'];
-
-        // Put the data in the session array
-        $f3->set('SESSION.food', $food);
-        $f3->set('SESSION.meal', $meal);
-
-        // Redirect to order2 route
-       $f3->reroute('order2');
-   }
-
-// Add date to F3 "hive"
-   $f3->set('meals', getMeals());
-
-    // Display a view page
-    $view = new Template();
-    echo $view->render('views/order-form-1.html');
+$GLOBALS['con']->order1();
 });
 
-    // Define a order form 2 route
-    $f3->route('GET|POST /order2', function($f3) {
-     //echo "Order Form Part II";
-
-     // If the form has been posted
-      if($_SERVER['REQUEST_METHOD'] == 'POST') {
-
-        // Validate the data
-        if (isset($_POST['conds'])){
-          $conds = implode(", ", $_POST['conds']);
-       }
-       else {
-           $conds = "None selected";
-      }
-
-       // Put the data in the session array
-          $f3->set('SESSION.conds', $conds);
-
-       // Redirect to summary route
-       $f3->reroute('summary');
-
-    }
-
-        // Add date to F3 "hive"
-        $f3->set('condiments', getCondiments());
-    // Display a view page
-   $view = new Template();
-   echo $view->render('views/order-form-2.html');
-
+// Define a order form 2 route
+$f3->route('GET|POST /order2', function($f3) {
+$GLOBALS['con']->order2();
 });
 
 // Define an order summary route
-   $f3->route('GET /summary', function() {
-    //echo "Thank you for your order!";
-
-    // Display a view page
-   $view = new Template();
-  echo $view->render('views/order-summary.html');
+$f3->route('GET /summary', function() {
+$GLOBALS['con']->summary();
 });
 
-$f3->run();
+// Define a order form 2 route
+$f3->route('GET|POST /view-orders', function() {
+    $GLOBALS['con']->view();
+});
 
 
+// Run Fat-Free
+$f3->run(); //instance method
